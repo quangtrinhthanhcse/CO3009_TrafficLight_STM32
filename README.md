@@ -8,11 +8,11 @@ Giảng viên hướng dẫn: **TS. Lê Trọng Nhân**
 
 ## 👥 Thành viên nhóm thực hiện
 
-| STT | Họ và tên | MSSV | Tài khoản GitHub | Nhiệm vụ chính |
-| :---: | :--- | :---: | :---: | :--- |
-| 1 | Trịnh Thanh Quang (Nhóm trưởng) | [MSSV 1] | `@quangtrinhthanhcse` | Scheduler O(1), Software Timer, Tích hợp hệ thống |
-| 2 | [Họ và tên thành viên 2] | [MSSV 2] | `@github_username2` | Drivers (Button debounce, Traffic Light, DHT20, LCD I2C) |
-| 3 | [Họ và tên thành viên 3] | [MSSV 3] | `@github_username3` | Máy trạng thái (FSM Auto, Manual, Tuning), Báo cáo |
+| STT | Họ và tên | MSSV | Nhiệm vụ chính |
+| :---: | :--- | :---: | :--- |
+| 1 | Trịnh Thanh Quang (Nhóm trưởng) | [MSSV 1] | Scheduler O(1), Software Timer, Tích hợp hệ thống |
+| 2 | [Họ và tên thành viên 2] | [MSSV 2] | Drivers (Button debounce, Traffic Light, DHT20, LCD I2C) |
+| 3 | [Họ và tên thành viên 3] | [MSSV 3] | Máy trạng thái (FSM Auto, Manual, Tuning), Báo cáo |
 
 ---
 
