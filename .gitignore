@@ -1,0 +1,24 @@
+# STM32CubeIDE Build Artifacts
+Debug/
+Release/
+*.o
+*.d
+*.su
+*.elf
+*.bin
+*.hex
+*.map
+*.list
+
+# STM32CubeIDE / Eclipse Metadata & Project User Specific Files
+.metadata/
+.settings/
+*.launch
+*.pbi
+*.pbd
+*.browse
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
