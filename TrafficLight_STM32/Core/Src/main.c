@@ -100,6 +100,28 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  // Thử lần lượt 4 tổ hợp (0,0) (0,1) (1,0) (1,1), mỗi tổ hợp giữ 2 giây
+	  for (int i = 0; i < 4; i++) {
+		  HAL_GPIO_WritePin(TL1_A_GPIO_Port, TL1_A_Pin, (i >> 1) & 1);
+	      HAL_GPIO_WritePin(TL1_B_GPIO_Port, TL1_B_Pin, i & 1);
+	      HAL_Delay(2000);
+	  }
+
+	  /*
+	if (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) == GPIO_PIN_RESET)
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+	else
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+    */
+
+	  /*
+	uint8_t found[8]; int n = 0;
+	for (uint8_t addr = 1; addr < 128; addr++) {
+	if (HAL_I2C_IsDeviceReady(&hi2c1, addr << 1, 1, 10) == HAL_OK)
+        if (n < 8) found[n++] = addr;   // đặt breakpoint để xem mảng found
+}
+	   */
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
