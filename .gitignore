@@ -22,3 +22,6 @@ Release/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Course reference code
+SourceCode/
