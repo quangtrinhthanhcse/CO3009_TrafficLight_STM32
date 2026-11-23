@@ -11,8 +11,8 @@ Giảng viên hướng dẫn: **TS. Lê Trọng Nhân**
 | STT | Họ và tên | MSSV | Nhiệm vụ chính |
 | :---: | :--- | :---: | :--- |
 | 1 | Trịnh Thanh Quang (Nhóm trưởng) | 2412862 | Scheduler O(1), Software Timer, Tích hợp hệ thống |
-| 2 | Đỗ Lê Nhật Minh | 2412040 | Drivers (Button debounce, Traffic Light, DHT20, LCD I2C) |
-| 3 | Nguyễn Thành Phát | 2412595 | Máy trạng thái (FSM Auto, Manual, Tuning), Báo cáo |
+| 2 | Nguyễn Thành Phát | 2412595 | Drivers (Button debounce, Traffic Light, DHT20, LCD I2C) |
+| 3 | Đỗ Lê Nhật Minh | 2412040 | Máy trạng thái (FSM Auto, Manual, Tuning), Báo cáo |
 
 ---
 
