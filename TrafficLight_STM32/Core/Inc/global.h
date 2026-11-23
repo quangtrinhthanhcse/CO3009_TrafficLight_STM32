@@ -38,6 +38,9 @@
 #define TUNING_GREEN         32
 #define TUNING_MSG           34  // Hiện thông báo SAVED / ERR trong 3s rồi về Auto
 
+#define LINE1_DHT20			0
+#define LINE1_CONFIG		1
+
 extern int status;
 
 // Thời gian chạy chính thức (giây), luôn đảm bảo time_red = time_green + time_amber
@@ -48,5 +51,8 @@ extern uint32_t time_amber;
 // Giá trị tạm khi đang chỉnh trong Tuning (Vàng tự tính A = R - G)
 extern uint32_t temp_time_red;
 extern uint32_t temp_time_green;
+
+// Đổi hiện thị dòng 1 giữ Nhiệt độ- độ ẩm và Thời gian các đèn
+extern uint8_t lcd_line1_mode;
 
 #endif /* INC_GLOBAL_H_ */

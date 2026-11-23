@@ -9,3 +9,6 @@ uint32_t time_amber = 2;
 
 uint32_t temp_time_red   = 5;
 uint32_t temp_time_green = 3;
+
+uint8_t lcd_line1_mode = LINE1_DHT20;
+
