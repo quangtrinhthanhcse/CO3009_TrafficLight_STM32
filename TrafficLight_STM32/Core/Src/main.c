@@ -22,7 +22,16 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "global.h"
+#include "i2c-lcd.h"
+#include "dht20.h"
+#include "traffic_light.h"
+#include "scheduler.h"
+#include "software_timer.h"
+#include "button.h"
+#include "fsm_automatic.h"
+#include "fsm_manual.h"
+#include "fsm_tuning.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,7 +68,17 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+static void task_dht20_lcd(void) {
+    dht20_update();
+    /* Khi ở Night Mode, nhường dòng 1 LCD cho bộ đếm ngược Night Mode */
+    if (status >= NIGHT_INIT && status <= NIGHT_BLINK) return;
+    if (lcd_line1_mode == LINE1_DHT20) lcd_display_env(value_x10[1], value_x10[0], dht20_is_mock());
+    else lcd_display_config(time_red, time_green, time_amber);
+}
 
+static void task_heartbeat(void) {
+    HAL_GPIO_TogglePin(LED_0_GPIO_Port, LED_0_Pin);
+}
 /* USER CODE END 0 */
 
 /**
@@ -93,7 +112,44 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+  uint8_t i2c_found[8] = {0};
+  int i2c_count = 0;
+  for (uint8_t addr = 1; addr < 128; addr++) {
+      if (HAL_I2C_IsDeviceReady(&hi2c1, addr << 1, 1, 5) == HAL_OK) {
+          if (i2c_count < 8) {
+              i2c_found[i2c_count++] = addr;
+          }
+      }
+  }
 
+  uint8_t lcd_detected_addr = 0x27;
+  if (i2c_count > 0) {
+      for (int i = 0; i < i2c_count; i++) {
+          if (i2c_found[i] != 0x38) { // Bỏ qua địa chỉ DHT20
+              lcd_detected_addr = i2c_found[i];
+              break;
+          }
+      }
+  }
+  lcd_set_address(lcd_detected_addr << 1);
+
+  lcd_init();
+  dht20_init();
+  traffic_init();
+  button_init();
+
+  lcd_display_env(value_x10[1], value_x10[0], dht20_is_mock());
+
+  SCH_Init();
+  SCH_Add_Task(timerRun,          0,   1);
+  SCH_Add_Task(getInput,          0,   1);
+  SCH_Add_Task(fsm_automatic_run, 0,   1);
+  SCH_Add_Task(fsm_manual_run,    0,   1);
+  SCH_Add_Task(fsm_tuning_run,    0,   1);
+  SCH_Add_Task(task_heartbeat,    0,   50);
+  SCH_Add_Task(task_dht20_lcd,    100, 100);
+
+  HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -103,6 +159,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    SCH_Dispatch_Tasks();
   }
   /* USER CODE END 3 */
 }
@@ -292,7 +349,13 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+    if (htim->Instance == TIM2)
+    {
+        SCH_Update();
+    }
+}
 /* USER CODE END 4 */
 
 /**

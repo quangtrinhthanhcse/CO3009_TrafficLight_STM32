@@ -10,9 +10,9 @@ Giảng viên hướng dẫn: **TS. Lê Trọng Nhân**
 
 | STT | Họ và tên | MSSV | Nhiệm vụ chính |
 | :---: | :--- | :---: | :--- |
-| 1 | Trịnh Thanh Quang (Nhóm trưởng) | 2412862 | Scheduler O(1), Software Timer, Tích hợp hệ thống |
-| 2 | Nguyễn Thành Phát | 2412595 | Drivers (Button debounce, Traffic Light, DHT20, LCD I2C) |
-| 3 | Đỗ Lê Nhật Minh | 2412040 | Máy trạng thái (FSM Auto, Manual, Tuning), Báo cáo |
+| 1 | Trịnh Thanh Quang (Nhóm trưởng) | 2412862 | Scheduler O(1), Software Timer, Lên ý tưởng logic điều khiển & tính năng mở rộng, Tích hợp hệ thống, Demo sản phẩm |
+| 2 | Nguyễn Thành Phát | 2412595 | Drivers (Button debounce, Traffic Light, DHT20, LCD I2C), Tổng hợp báo cáo |
+| 3 | Đỗ Lê Nhật Minh | 2412040 | Máy trạng thái (FSM Auto, Manual, Tuning), Tổng hợp báo cáo |
 
 ---
 
@@ -21,24 +21,10 @@ Giảng viên hướng dẫn: **TS. Lê Trọng Nhân**
 Hệ thống điều khiển đèn giao thông thông minh cho ngã tư 2 tuyến đường hoạt động trên nền vi điều khiển **STM32F103RB** (mạch XNUCLEO-F103RB) với các tính năng cốt lõi:
 1. **Chế độ tự động (Automatic):** Hai tuyến đèn Đỏ – Xanh – Vàng hoạt động luân phiên theo chu kỳ định trước, đảm bảo an toàn giao thông.
 2. **Chế độ bằng tay (Manual):** Cho phép lực lượng điều phối chuyển pha đèn khẩn cấp bằng nút bấm.
-3. **Chế độ chỉnh thời gian (Tuning):** Cài đặt thời gian Đỏ/Xanh trực tiếp bằng nút bấm, hiển thị trực quan giá trị Vàng tạm tính qua màn hình LCD I2C với điều kiện hợp lệ: $t_{\text{Xanh}} < t_{\text{Đỏ}}$ (tự tính $t_{\text{Vàng}} = t_{\text{Đỏ}} - t_{\text{Xanh}}$).
+3. **Chế độ chỉnh thời gian (Tuning):** Cài đặt thời gian Đỏ/Xanh trực tiếp bằng nút bấm, hiển thị trực quan giá trị Vàng tạm tính qua màn hình LCD I2C với điều kiện hợp lệ: $t_{\text{Vàng}} = t_{\text{Đỏ}} - t_{\text{Xanh}} \ge 3\text{s}$ và $t_{\text{Xanh}} \ge t_{\text{Vàng}}$.
 4. **Hiển thị môi trường:** Đọc cảm biến nhiệt độ & độ ẩm DHT20 qua giao tiếp I2C và cập nhật định kỳ lên LCD.
 5. **Scheduler $O(1)$:** Toàn bộ hệ thống chạy trên bộ điều phối tác vụ (Cooperative Scheduler) đạt độ phức tạp $O(1)$ cho hàm `SCH_Update()`, hỗ trợ one-shot task và không sử dụng hàm trễ chặn (`HAL_Delay`).
-6. **Chế độ Ban đêm (Night Mode - Tính năng mở rộng):** Nhấn giữ **Nút 1 (`BTN_1`)** $\ge 1\text{s}$ để cài đặt bộ hẹn giờ đếm ngược cho Night Mode (`BTN_3`/`BTN_4` chỉnh thời gian, `BTN_2` xác nhận bắt đầu chạy); khi chạy, LCD tắt hiển thị nhiệt độ/độ ẩm để hiển thị đếm ngược `NIGHT_MODE: XXs` và tự động trở về Chế độ Tự động khi hết giờ.
-
----
-
-## 🔌 Sơ đồ kết nối phần cứng (Pinout)
-
-| Thiết bị ngoại vi | Chân Arduino (Shield Grove) | Chân STM32 | Chế độ GPIO / Ngoại vi | Chức năng |
-| :--- | :---: | :---: | :--- | :--- |
-| **Đèn giao thông tuyến 1** | D3, D4 | `PB3`, `PB5` | Output Push-Pull | 2 chân tạo 4 trạng thái đèn |
-| **Đèn giao thông tuyến 2** | D5, D6 | `PB4`, `PB10` | Output Push-Pull | 2 chân tạo 4 trạng thái đèn |
-| **Module Nút nhấn 1 & 2** | D7, D8 | `PA8`, `PA9` | Input Pull-up | `BTN_1` (Đổi Mode / Giữ: Night Mode), `BTN_2` (Select) |
-| **Module Nút nhấn 3 & 4** | D9, D10 | `PC7`, `PB6` | Input Pull-up | `BTN_3` (Tăng +1s / Về Auto), `BTN_4` (Giảm -1s) |
-| **Cảm biến DHT20 & LCD** | Khe I2C (màu đỏ) | `PB8` (SCL), `PB9` (SDA) | I2C1 (Standard Mode 100kHz) | Đọc DHT20 & hiển thị LCD (Internal Pull-up) |
-| **LED tích hợp trên bo** | – | `PA5` (`LED_0`), `PC9` (`LED_1`) | Output Push-Pull | `LED_0` báo nhịp tim hệ thống |
-| **Nút nhấn USER trên bo** | – | `PC13` | Input | Nút phụ / Debug |
+6. **Chế độ Ban đêm (Night Mode - Tính năng mở rộng):** Nhấn giữ **Nút 1 (`BTN_1`)** $\ge 1\text{s}$ để cài đặt bộ hẹn giờ đếm ngược cho Night Mode (`BTN_3`/`BTN_4` chỉnh thời gian, `BTN_2` xác nhận bắt đầu chạy); khi chạy, LCD tắt hiển thị nhiệt độ/độ ẩm để hiển thị đếm ngược `NIGHT_MODE: XXh` và tự động trở về Chế độ Tự động khi hết giờ.
 
 ---
 
@@ -85,7 +71,8 @@ Hệ thống điều khiển đèn giao thông thông minh cho ngã tư 2 tuyế
 
 ## 🎮 Hướng dẫn Vận hành
 
-* **Khi vừa khởi động / Reset:** Hệ thống chạy ở **Chế độ Tự động (Automatic)**, luân phiên pha đèn Tuyến 1 và Tuyến 2. LCD hiển thị nhiệt độ/độ ẩm đọc từ DHT20.
+* **Khi vừa khởi động / Reset:** Hệ thống chạy ở **Chế độ Tự động (Automatic)**, luân phiên pha đèn Tuyến 1 và Tuyến 2. LCD mặc định hiển thị nhiệt độ/độ ẩm đọc từ DHT20 ở dòng 1 và đếm ngược pha đèn ở dòng 2.
+* **Trong Chế độ Auto (Tự động):** Nhấn **Nút 4 (`BTN_4`)** để chuyển đổi qua lại hiển thị dòng 1 LCD giữa thông số môi trường (**DHT20**) và thời gian cấu hình đèn (**`R:XX  G:XX  A:XX`**) mà không ảnh hưởng tới chu kỳ đèn đang chạy.
 * **Nút 1 (Chuyển chế độ):** Nhấn ngắn để chuyển vòng tròn: `Auto` $\rightarrow$ `Manual` *(giữ nguyên/đóng băng pha đèn đang chạy)* $\rightarrow$ `Tuning` $\rightarrow$ `Auto`.
 * **Trong Chế độ Manual (Bằng tay):**
   - Khi vừa chuyển từ `Auto` sang, đèn vẫn giữ nguyên đúng pha trước đó để đảm bảo an toàn giao thông.
@@ -96,8 +83,8 @@ Hệ thống điều khiển đèn giao thông thông minh cho ngã tư 2 tuyế
   - Nhấn **Nút 2** để chuyển qua lại giữa chỉnh **Đỏ (`RED`)** và **Xanh (`GREEN`)** (LCD tự hiển thị kèm giá trị **Vàng (`A = R - G`)** tạm tính).
   - Nhấn **Nút 3** để tăng thời gian (+1 giây, hỗ trợ nhấn giữ tăng nhanh).
   - Nhấn **Nút 4** để giảm thời gian (-1 giây, hỗ trợ nhấn giữ giảm nhanh).
-  - Nhấn **Nút 1** để xác nhận & thoát về chế độ Auto (yêu cầu $t_{\text{Xanh}} < t_{\text{Đỏ}}$ để $t_{\text{Vàng}} = t_{\text{Đỏ}} - t_{\text{Xanh}} \ge 1\text{s}$; hiện `SAVED!` hoặc `ERR` trong 3s rồi nối tiếp mượt mà pha Auto đang chạy nền, thời gian mới tự áp dụng từ pha tiếp theo).
+  - Nhấn **Nút 1** để xác nhận & thoát về chế độ Auto (yêu cầu $t_{\text{Vàng}} = t_{\text{Đỏ}} - t_{\text{Xanh}} \ge 3\text{s}$ và $t_{\text{Xanh}} \ge t_{\text{Vàng}}$; hiện `SAVED!` hoặc `ERR` trong 2.5s rồi nối tiếp mượt mà pha Auto đang chạy nền, thời gian mới tự áp dụng từ pha tiếp theo).
 * **Nút 1 (`BTN_1`) - Chế độ Ban đêm có Hẹn giờ (Night Mode):**
   - Nhấn giữ **Nút 1** ($\ge 1\text{s}$) khi đang ở Chế độ Auto để vào màn hình hẹn giờ Night Mode (LCD ẩn nhiệt độ/độ ẩm, dòng 1 hiển thị `NIGHT_MODE: XXh`, đèn Vàng nháy báo hiệu mỗi 500 ms).
   - Dùng **Nút 3** (`+`) / **Nút 4** (`-`) để chỉnh thời gian đếm ngược (`01..99`), nhấn thả **Nút 2** để xác nhận bắt đầu chạy đếm lùi (đèn Vàng sáng 2s / tắt 1s).
-  - Khi đếm ngược về `00s`, hệ thống **tự động chuyển về Chế độ Auto** (hoặc bấm **Nút 1** để hủy/thoát sớm về Auto bất kỳ lúc nào).
+  - Khi đếm ngược về `0`, hệ thống **tự động chuyển về Chế độ Auto** (hoặc bấm **Nút 1** để hủy/thoát sớm về Auto bất kỳ lúc nào).
